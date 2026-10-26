@@ -2,11 +2,13 @@
   "name": "tools-desktop-mg",
   "version": "0.1.0",
   "description": "macOS 本地中间件/服务管理工具：一键启动、停止、强制停止、状态监控、端口展示",
+  "author": "li.jx",
   "main": "out/main/index.js",
   "private": true,
   "scripts": {
     "dev": "electron-vite dev",
     "build": "electron-vite build",
+    "dist": "electron-vite build && electron-builder",
     "typecheck": "tsc --noEmit -p tsconfig.node.json && tsc --noEmit -p tsconfig.web.json"
   },
   "dependencies": {
@@ -20,6 +22,7 @@
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.1.2",
     "electron": "^45.0.0",
+    "electron-builder": "^26.18.0",
     "electron-vite": "^6.0.0",
     "tailwindcss": "^4.3.3",
     "typescript": "^7.0.2",

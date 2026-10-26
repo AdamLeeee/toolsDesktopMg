@@ -1,0 +1,18 @@
+appId: com.lijx.toolsdesktopmg
+productName: toolsDesktopMg
+directories:
+  output: dist
+  buildResources: build
+files:
+  - out/**
+  - package.json
+asar: true
+mac:
+  category: public.app-category.developer-tools
+  # 本地开发构建跳过代码签名（无开发者证书时必须），分发时再配置证书
+  identity: null
+  target:
+    - target: dmg
+      arch: [arm64]
+dmg:
+  title: ${productName}
