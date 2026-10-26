@@ -14,5 +14,12 @@ mac:
   target:
     - target: dmg
       arch: [arm64]
+win:
+  target:
+    - target: nsis
+      arch: [x64]
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
 dmg:
   title: ${productName}

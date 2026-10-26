@@ -54,11 +54,71 @@ npm run dev
 
 ```bash
 npm run build      # 三端生产构建（out/ 目录）
-npm run dist       # 生产构建 + 打包 .dmg（输出到 dist/，当前 arm64）
+npm run dist       # 生产构建 + 打包安装包（输出到 dist/）
 npm run typecheck  # 主进程 + 渲染进程类型检查
 ```
 
-> 打包产物如 `dist/toolsDesktopMg-0.1.0-arm64.dmg`（约 116MB），本地开发构建未做代码签名，首次打开需右键 →「打开」绕过 Gatekeeper。如需 Intel 版本，在 `electron-builder.yml` 的 `arch` 中加 `x64`（或改 `universal`）。
+## 打包分发（构建安装包）
+
+使用 **electron-builder** 打包，配置见项目根目录的 `electron-builder.yml`。所有安装包产物输出到 `dist/`。
+
+### 支持的平台与产物
+
+| 平台 | 命令 | 产物 | 说明 |
+|---|---|---|---|
+| macOS | `npm run dist` | `dist/toolsDesktopMg-0.1.0-arm64.dmg` | 默认目标，Apple Silicon |
+| macOS Intel | 改 yml `arch` 加 `x64` | `dist/toolsDesktopMg-0.1.0-x64.dmg` | 需在 x64 机器上构建 |
+| macOS 双架构 | yml `arch: [universal]` | `dist/toolsDesktopMg-0.1.0-universal.dmg` | 含 arm64 + x64，包体约翻倍 |
+| Windows | `electron-builder --win` | `.exe` NSIS 安装程序 + 便携版 | 见下方「Windows 说明」 |
+
+### electron-builder.yml（mac + win 配置示例）
+
+```yaml
+appId: com.lijx.toolsdesktopmg
+productName: toolsDesktopMg
+directories:
+  output: dist
+  buildResources: build
+files:
+  - out/**
+  - package.json
+asar: true
+mac:
+  category: public.app-category.developer-tools
+  # 本地开发构建跳过代码签名（无开发者证书时必须），分发时再配置证书
+  identity: null
+  target:
+    - target: dmg
+      arch: [arm64]           # 加 x64 或改 universal 可打多架构
+win:
+  target:
+    - target: nsis
+      arch: [x64]
+  # icon: build/icon.ico     # 准备 Windows 图标后取消注释
+nsis:
+  oneClick: false            # 允许选择安装目录
+  allowToChangeInstallationDirectory: true
+```
+
+### dist/ 产物结构
+
+```
+dist/
+├── toolsDesktopMg-0.1.0-arm64.dmg     # macOS 安装镜像（约 116MB）
+├── toolsDesktopMg-0.1.0-arm64.dmg.blockmap
+├── mac-arm64/toolsDesktopMg.app       # macOS 应用包（可直接双击运行）
+├── toolsDesktopMg-Setup-0.1.0.exe     # Windows NSIS 安装程序
+├── toolsDesktopMg-0.1.0.exe           # Windows 便携版（免安装）
+└── win-unpacked/                      # Windows 解包目录（调试用）
+```
+
+### 注意事项
+
+- **签名与公证**：未配置证书时 macOS 构建用 `identity: null`，首次打开需**右键 →「打开」**绕过 Gatekeeper；正式分发需 Apple Developer 证书并做公证（notarization）。Windows 分发需代码签名证书（signtool）。
+- **应用图标**：当前为 Electron 默认图标。准备 `build/icon.icns`（macOS）与 `build/icon.ico`（Windows）后 electron-builder 自动生效。
+- **Windows 平台兼容性**：打包结构上可行，但应用的**进程管理层目前使用 macOS 专属命令**（`/bin/zsh`、`lsof`、`pgrep`、`ps`），在 Windows 上需适配为 PowerShell / `Get-NetTCPConnection` / `Get-Process` 后才能正常启停服务 —— 属待开发事项，见 Roadmap。
+- **交叉编译**：在 macOS 上构建 Windows 包需要 Wine；推荐在目标平台本机或 CI（如 GitHub Actions 平台矩阵）上分别构建。
+- **发布上传**：`electron-builder` 支持 `--publish` 配合 GitHub Release / 通用服务器自动上传产物。
 
 ## 使用指南
 
@@ -123,6 +183,7 @@ src/
 - [ ] 精确 CPU% 差分计算（当前为 ps 衰减均值口径）
 - [ ] 批量启停（一键拉起整套环境）
 - [ ] 包管理器下拉选项（npm / pnpm / yarn）
-- [x] electron-builder 打包分发（.dmg，arm64；Universal 待加 x64 target）
+- [x] electron-builder 打包分发（.dmg arm64；x64/Universal 待加 target）
+- [ ] Windows 平台适配（进程层替换 PowerShell / Get-NetTCPConnection）并产出 .exe
 - [ ] 应用图标与代码签名 / 公证
 - [ ] 开机自启（LaunchAgent 生成）
