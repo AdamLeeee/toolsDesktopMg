@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ClaudeCodeEditorTabs">
+    <option name="activeSessionId" value="5a7c882c-3519-419e-822e-fbe72ec475bc" />
+    <option name="openSessionIds">
+      <list>
+        <option value="5a7c882c-3519-419e-822e-fbe72ec475bc" />
+      </list>
+    </option>
+    <option name="sessionPaths">
+      <map>
+        <entry key="5a7c882c-3519-419e-822e-fbe72ec475bc" value="/sessions/beb905b4-5670-445e-ab48-33e960a31122" />
+      </map>
+    </option>
+    <option name="sessionTitles">
+      <map>
+        <entry key="5a7c882c-3519-419e-822e-fbe72ec475bc" value="我想要在mac os 上开发一款桌面应用， 实现管理本地插件、数据库等内容，非docker容器内的应" />
+      </map>
+    </option>
+  </component>
+</project>
