@@ -5,6 +5,7 @@ import { dirname, join } from 'node:path'
 import { randomUUID } from 'node:crypto'
 import { ProcessManager } from './processManager'
 import { JsonStore, servicesFile, defaultLogFile } from './store'
+import { shellEnv } from './shellEnv'
 import type { ServiceConfig } from '@shared/types'
 
 app.setName('toolsDesktopMg')
@@ -134,7 +135,8 @@ function registerIpc(): void {
       return new Promise<{ ok: boolean; code: number | null }>((resolve) => {
         const child = spawn('/bin/zsh', ['-lc', action.command], {
           cwd: cfg.workDir || undefined,
-          stdio: ['ignore', out, out]
+          stdio: ['ignore', out, out],
+          env: shellEnv()
         })
         child.on('exit', (code) => {
           runningActions.delete(key)

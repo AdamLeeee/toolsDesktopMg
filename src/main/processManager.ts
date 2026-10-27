@@ -4,6 +4,7 @@ import { dirname } from 'node:path'
 import { promisify } from 'node:util'
 import type { ProcessStat, ServiceConfig, ServiceStatus } from '@shared/types'
 import { JsonStore, pidsFile } from './store'
+import { shellEnv } from './shellEnv'
 
 const execFileAsync = promisify(execFile)
 
@@ -43,7 +44,8 @@ export class ProcessManager {
     const child = spawn('/bin/zsh', ['-lc', cfg.startCommand], {
       cwd: cfg.workDir || undefined,
       detached: true,
-      stdio: ['ignore', out, out]
+      stdio: ['ignore', out, out],
+      env: shellEnv()
     })
     child.unref()
     const pid = child.pid
@@ -69,7 +71,8 @@ export class ProcessManager {
   async stop(cfg: ServiceConfig): Promise<void> {
     if (cfg.stopCommand && cfg.stopCommand.trim()) {
       await execFileAsync('/bin/zsh', ['-lc', cfg.stopCommand], {
-        cwd: cfg.workDir || undefined
+        cwd: cfg.workDir || undefined,
+        env: shellEnv()
       }).catch((err) => {
         throw new Error(`停止命令执行失败: ${err.message}`)
       })

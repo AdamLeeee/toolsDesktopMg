@@ -102,7 +102,7 @@ export default function App() {
             <li
               key={config.id}
               onClick={() => setEditing(config)}
-              className="flex items-center gap-2 px-4 py-3 cursor-pointer hover:bg-zinc-800/60 border-b border-zinc-800/50"
+              className="group flex items-center gap-2 px-4 py-3 cursor-pointer hover:bg-zinc-800/60 border-b border-zinc-800/50"
             >
               <StatusDot status={status} />
               <div className="min-w-0 flex-1">
@@ -113,6 +113,16 @@ export default function App() {
                 </div>
               </div>
               <StatusBadge status={status} size="sm" />
+              <button
+                onClick={(e) => {
+                  e.stopPropagation()
+                  if (confirm(`确定删除服务「${config.name}」的配置吗？`)) removeService(config.id)
+                }}
+                className="shrink-0 rounded p-1 text-zinc-500 opacity-0 group-hover:opacity-100 hover:text-red-400 hover:bg-zinc-800"
+                title="删除该服务配置"
+              >
+                🗑
+              </button>
             </li>
           ))}
           {services.length === 0 && (
